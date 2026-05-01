@@ -1,0 +1,32 @@
+name: Deploy Apache Site
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'public-html/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 1
+        
+    - name: Copy files to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_KEY }}
+        source: "public-html/"
+        target: "/var/www/html/"
+
+    - name: Restart Apache
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_KEY }}
+        script: sudo systemctl restart apache2
