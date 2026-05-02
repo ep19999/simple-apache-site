@@ -22,6 +22,7 @@ jobs:
         key: ${{ secrets.SERVER_KEY }}
         source: "public-html/"
         target: "/var/www/html/"
+        strip_components: 1
 
     - name: Restart Apache
       uses: appleboy/ssh-action@master
